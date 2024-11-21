@@ -1,0 +1,9 @@
+{
+	"login_url":"https://amp.askeydms.com/#/pages/authentication/login-v2",
+	"dashboard_url":"https://amp.askeydms.com/#/dashboard",
+	"user":"",
+	"amp_password":"",
+	"web_root":"https://1.1.1.1",
+	"web_password":"",
+	"serial_number":""
+}
