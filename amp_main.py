@@ -130,12 +130,12 @@ class Config:
 		for key, value in kwargs.items():
 			setattr(self, key, value)
 
-default_provision = ["2120_BASIC.json", "2120_QAM256_2L.json"]
+default_provision = ["BASIC.json", "QAM256_2L.json"]
 default_radio = "radio.json"
 
 parser = argparse.ArgumentParser(description="Load configuration files")
 parser.add_argument("-p", "--provisions", nargs="*",default=default_provision, help="List of provision files to load")
-parser.add_argument("-r", "--radio", nargs="?", default=default_radio, help="radio file to load")
+parser.add_argument("-r", "--radio", nargs="?", default=default_radio, help="radio file to load, default is \"N78 100MHz 4:1\"")
 args = parser.parse_args()
 
 provision = {}

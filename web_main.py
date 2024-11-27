@@ -35,19 +35,26 @@ class ASK_IPSEC_SD_select(IntEnum):
 	AuthenticationType = auto()
 	SD = auto()
 
-default_provision = ["2120_BASIC.json", "2120_QAM256_2L.json", "radio.json"]
+default_provision = ["BASIC.json", "QAM256_2L.json"]
+default_radio = ["radio.json"]
 
 parser = argparse.ArgumentParser(description="Load configuration files")
-parser.add_argument("files", nargs="*",default=default_provision, help="List of configuration files to load")
+parser.add_argument("-p", "--provisions", nargs="*",default=default_provision, help="List of provision files to load")
+parser.add_argument("-r", "--radio", nargs="?", default=default_radio, help="radio file to load, default is \"N78 100MHz 4:1\"")
 args = parser.parse_args()
 
-qam_files = [file for file in args.files if "QAM" in file]
-other_files = [file for file in args.files if "QAM" not in file]
+qam_file = [file for file in args.provisions if "QAM" in file]
+other_files = [file for file in args.provisions if "QAM" not in file]
 
 provision = {}
-for file in other_files + qam_files:
+for file in other_files:
     with open(file, 'r') as f:
         provision.update(Config(**json.load(f)).__dict__)
+with open(args.radio, 'r') as f:
+	provision.update(Config(**json.load(f)).__dict__)
+if qam_file:
+	with open(qam_file[0], 'r') as f:
+		provision.update(Config(**json.load(f)).__dict__)
 
 with open("config.json", 'r') as f:
 	config = Config(**json.load(f))
@@ -198,13 +205,13 @@ for key, value in provision.items():
 			else :
 				page.eles("@@class:SD_select")[ASK_IPSEC_SD_select.SD].click()
 
-			if value != "Disabled":
+			if value != "16777215": 
 				print(key.lower(), "= Enabled,", value)
 				page.ele(". css-4o2p2z-menu").ele("text:Enabled").click()
 				page.ele("#sd").clear()
 				page.ele("#sd").input(value)
-			else:
-				print(key.lower(), "=", value)
+			else: # disable
+				print(key.lower(), "= Disabled")
 				page.ele(". css-4o2p2z-menu").ele("text:Disabled").click()
 
 		elif key == "PCI":
@@ -256,10 +263,12 @@ if cfm_box.attr("aria-hidden") != "true":
 	cfm_box.ele("tag:a@@name:box_ok").click()
 	time.sleep(1)
 msgLogger("waiting for cfm_box visible...")
+
 cfm_box = page.ele("#cfm_box")
 while cfm_box.attr("aria-hidden") == "true":
 	cfm_box = page.ele("#cfm_box")
 	time.sleep(1)
 msgLogger("cfm_box is visible...")
-cfm_box.ele("tag:a@@name:box_x").click()
+
+cfm_box.ele("tag:a@@name:box_ok").click()
 msgLogger("finish! reboot now...")
