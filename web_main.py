@@ -36,7 +36,7 @@ class ASK_IPSEC_SD_select(IntEnum):
 	SD = auto()
 
 default_provision = ["BASIC.json", "QAM256_2L.json"]
-default_radio = ["radio.json"]
+default_radio = "radio.json"
 
 parser = argparse.ArgumentParser(description="Load configuration files")
 parser.add_argument("-p", "--provisions", nargs="*",default=default_provision, help="List of provision files to load")
@@ -47,11 +47,14 @@ qam_file = [file for file in args.provisions if "QAM" in file]
 other_files = [file for file in args.provisions if "QAM" not in file]
 
 provision = {}
+
 for file in other_files:
     with open(file, 'r') as f:
         provision.update(Config(**json.load(f)).__dict__)
+
 with open(args.radio, 'r') as f:
 	provision.update(Config(**json.load(f)).__dict__)
+
 if qam_file:
 	with open(qam_file[0], 'r') as f:
 		provision.update(Config(**json.load(f)).__dict__)
@@ -66,6 +69,8 @@ textbox_list = ["gnb_n2_ip", "gnb_n3_ip", "gnb_id", "gnb_id_length", "cell_id", 
 checkbox_list = ["modulation", "layer", "drms"]
 selectmenu_list = ["nr_band"]
 selectmenu_profile_list = ["bandwidth", "nrarfcn", "timeslot"]
+
+N3_targets = ["SCE2200", "SCU2050", "SCU2060", "SCU2070", "SCU5000"]
 
 co = ChromiumOptions()
 co.set_argument('--window-size', '1920,1080')
@@ -106,6 +111,10 @@ else:
 	reminderBlock = page.ele("#popup_clone").ele(".wrap_pop1 modal-content", timeout=5)
 	reminderBlock.ele("tag:a@@text():OK").click()
 	msgLogger("OK")
+# ----------------------get software_version----------------------
+msgLogger("get software version info...")
+software_version_info = page.ele("#software_version").text
+isN3 = True if any(target in software_version_info for target in N3_targets) else False
 
 # ----------------------Switch to configuration----------------------
 msgLogger("switch to gNB configuration...")
@@ -191,9 +200,16 @@ for key, value in provision.items():
 
 		if key.lower() in textbox_list:
 			print(key.lower(), "=", value)
-			gnb_id = page.ele(f"#{key.lower()}")
-			gnb_id.clear()
-			gnb_id.input(value)
+			if key == "GNB_N3_IP":
+				if isN3:
+					if page.ele("#gnb_n3_ip").attr("disabled") is not None:
+						page.ele("tag:label@@for:specific_n3_ip").click()
+				else:
+					continue
+
+			textbox = page.ele(f"#{key.lower()}")
+			textbox.clear()
+			textbox.input(value)
 
 		elif key == "SD":
 			if not isASK:
