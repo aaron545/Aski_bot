@@ -193,80 +193,79 @@ if isASK:
 
 
 for key, value in provision.items():
-	if key != "EPSFB" and key != "POWER":
-		if (key.lower() in CU_list) != isCU:
-			page.ele("tag:div@@class:switchBtn").click()
-			isCU = not isCU
+	if key == "EPSFB" or key == "POWER":
+		continue
+	if (key.lower() in CU_list) != isCU:
+		page.ele("tag:div@@class:switchBtn").click()
+		isCU = not isCU
 
-		if key.lower() in textbox_list:
-			print(key.lower(), "=", value)
-			if key == "GNB_N3_IP":
-				if isN3:
-					if page.ele("#gnb_n3_ip").attr("disabled") is not None:
-						page.ele("tag:label@@for:specific_n3_ip").click()
-				else:
-					continue
+	if key.lower() in textbox_list:
+		print(key.lower(), "=", value)
+		if key == "GNB_N3_IP" and not isN3:
+			continue
+		if key == "GNB_N3_IP" and page.ele("#gnb_n3_ip").attr("disabled") is not None:
+			page.ele("tag:label@@for:specific_n3_ip").click()
 
-			textbox = page.ele(f"#{key.lower()}")
-			textbox.clear()
-			textbox.input(value)
+		textbox = page.ele(f"#{key.lower()}")
+		textbox.clear()
+		textbox.input(value)
 
-		elif key == "SD":
-			if not isASK:
-				page.ele("@@class:SD_select").click()
-			# elif isIPsec:
-			# 	page.eles("@@class:SD_select")[ASK_IPSEC_SD_select.SD].click()
-			# else:
-			# 	page.eles("@@class:SD_select")[ASK_nonIPSEC_SD_select.SD].click()
-			else :
-				page.eles("@@class:SD_select")[ASK_IPSEC_SD_select.SD].click()
+	elif key == "SD":
+		if not isASK:
+			page.ele("@@class:SD_select").click()
+		# elif isIPsec:
+		# 	page.eles("@@class:SD_select")[ASK_IPSEC_SD_select.SD].click()
+		# else:
+		# 	page.eles("@@class:SD_select")[ASK_nonIPSEC_SD_select.SD].click()
+		else :
+			page.eles("@@class:SD_select")[ASK_IPSEC_SD_select.SD].click()
 
-			if value != "16777215": 
-				print(key.lower(), "= Enabled,", value)
-				page.ele(". css-4o2p2z-menu").ele("text:Enabled").click()
-				page.ele("#sd").clear()
-				page.ele("#sd").input(value)
-			else: # disable
-				print(key.lower(), "= Disabled")
-				page.ele(". css-4o2p2z-menu").ele("text:Disabled").click()
+		if value != "16777215": 
+			print(key.lower(), "= Enabled,", value)
+			page.ele(". css-4o2p2z-menu").ele("text:Enabled").click()
+			page.ele("#sd").clear()
+			page.ele("#sd").input(value)
+		else: # disable
+			print(key.lower(), "= Disabled")
+			page.ele(". css-4o2p2z-menu").ele("text:Disabled").click()
 
-		elif key == "PCI":
-			print("physical_cell_id =", value)
-			gnb_id = page.ele(f"#physical_cell_id")
-			gnb_id.clear()
-			gnb_id.input(value)
+	elif key == "PCI":
+		print("physical_cell_id =", value)
+		gnb_id = page.ele(f"#physical_cell_id")
+		gnb_id.clear()
+		gnb_id.input(value)
 
-		elif key.lower() in checkbox_list:
-			if key.lower() == "modulation":
-				print("modulation =", value)
-				page.ele(f"tag:label@@for:{value}").click()
-			elif key.lower() == "layer":
-				print("layer =", value)
-				if value == "1":
-					page.ele(f"tag:label@@for:One layer").click()
-				else:
-					page.ele(f"tag:label@@for:Two layer").click()
-			elif key.lower() == "drms":
-				print("drms =", value)
-				if value == "pos1":
-					page.ele(f"tag:label@@for:Pos1").click()
-				else:
-					page.ele(f"tag:label@@for:Pos2").click()
-
-		elif key.lower() in selectmenu_list:
-			print(key.lower(), "=", value)
-			page.ele(f"@@class:{key.lower()}").click()
-			page.ele(". css-4o2p2z-menu").ele(f"text:{value}").click()
-
-		elif key.lower() in selectmenu_profile_list:
-			print(key.lower(), "=", value)
-			if key.lower() == "nrarfcn":
-				page.ele(f"@@class:nrArfcn_profile").click()
-			elif key.lower() == "timeslot":
-				page.ele(f"@@class:timeSlot_profile").click()
+	elif key.lower() in checkbox_list:
+		if key.lower() == "modulation":
+			print("modulation =", value)
+			page.ele(f"tag:label@@for:{value}").click()
+		elif key.lower() == "layer":
+			print("layer =", value)
+			if value == "1":
+				page.ele(f"tag:label@@for:One layer").click()
 			else:
-				page.ele(f"@@class:{key.lower()}_profile").click()
-			page.ele(". css-4o2p2z-menu").ele(f"text:{value}").click()	
+				page.ele(f"tag:label@@for:Two layer").click()
+		elif key.lower() == "drms":
+			print("drms =", value)
+			if value == "pos1":
+				page.ele(f"tag:label@@for:Pos1").click()
+			else:
+				page.ele(f"tag:label@@for:Pos2").click()
+
+	elif key.lower() in selectmenu_list:
+		print(key.lower(), "=", value)
+		page.ele(f"@@class:{key.lower()}").click()
+		page.ele(". css-4o2p2z-menu").ele(f"text:{value}").click()
+
+	elif key.lower() in selectmenu_profile_list:
+		print(key.lower(), "=", value)
+		if key.lower() == "nrarfcn":
+			page.ele(f"@@class:nrArfcn_profile").click()
+		elif key.lower() == "timeslot":
+			page.ele(f"@@class:timeSlot_profile").click()
+		else:
+			page.ele(f"@@class:{key.lower()}_profile").click()
+		page.ele(". css-4o2p2z-menu").ele(f"text:{value}").click()	
 msgLogger("finish!!!")
 
 # save config
