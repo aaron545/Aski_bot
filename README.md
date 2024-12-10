@@ -17,4 +17,5 @@ Edit content of `sample_config.json` and rename it as `config.json`.
 ## Commands
 
 Please run `python amp_main.py --help` or `python web_main.py --help` to view the options.
+
 for example: `python web_main.py -p BASIC.json QAM256_2L.json -r ratio.json`
