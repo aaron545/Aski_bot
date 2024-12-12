@@ -19,6 +19,12 @@ def msgLogger(msg):
     print(msg)
     print('--------------------------')
 
+def loading(page, target):
+	loadingBar = page.ele("#loadingBar")
+	loadingBar.attr("style")
+	while "display: none" not in loadingBar.attr("style"):
+		msgLogger(f"{target} is loading......")
+		time.sleep(1)
 
 class Config:
 	def __init__(self,**kwargs):
@@ -101,7 +107,7 @@ except:
 msgLogger(f"waiting for get {root}/home...")
 while page.url != root+"/home":
 	time.sleep(1)
-time.sleep(4)
+loading(page, "home page")
 
 msgLogger("try to close reminderBlock...")
 
@@ -164,7 +170,7 @@ while page.url != root+"/configuration/gNB":
 # ----------------------Modify parameters----------------------
 
 msgLogger("ready to start modifying parameters")
-time.sleep(10)
+loading(page, "gNB page")
 
 # current is CU or DU page
 styleAttr = page.ele("tag:div@@class:switchBtn").attr("style")
