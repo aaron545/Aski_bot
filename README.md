@@ -13,6 +13,8 @@ Edit content of `sample_config.json` and rename it as `config.json`.
 - web_root: the url to gNB web (eg. https://1.1.1.1)
 - web_password: the password to gNB web
 - serial_number: you can get on your gNB sticker
+- security_gateway: the ip of security_gateway
+- ipsec_right_subnet: the ip of ipsec_right_subnet
 
 ## Commands
 
