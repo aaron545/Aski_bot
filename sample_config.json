@@ -5,5 +5,7 @@
 	"amp_password":"",
 	"web_root":"https://1.1.1.1",
 	"web_password":"",
-	"serial_number":""
+	"serial_number":"",
+	"security_gateway":"",
+	"ipsec_right_subnet":""
 }

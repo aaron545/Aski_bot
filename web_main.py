@@ -154,9 +154,9 @@ if isASK:
 		time.sleep(0.5)
 
 	page.ele("#security_gateway").clear()
-	page.ele("#security_gateway").input("211.75.141.110")
+	page.ele("#security_gateway").input(config.security_gateway)
 	page.ele("#ipsec_right_subnet").clear()
-	page.ele("#ipsec_right_subnet").input("172.29.0.0/22")
+	page.ele("#ipsec_right_subnet").input(config.ipsec_right_subnet)
 
 
 for key, value in provision.items():
