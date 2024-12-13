@@ -128,45 +128,6 @@ while page.url != root+"/configuration/gNB":
 	page.ele("tag:a@@href=/configuration/gNB").click()
 	time.sleep(2)
 
-# ----------------------Configuration----------------------
-# switch gNB CU and DU
-# page.ele("tag:div@@class:switchBtn").click()
-
-
-# selectmenu 
-# SD = "66051"
-# SD = "Disabled"
-
-# page.eles(".SD_select css-b62m3t-container")[SD_select.SD].click()
-# if SD != "Disabled":
-# 	page.ele(". css-4o2p2z-menu").ele("text:Enabled").click()
-# 	page.ele("#sd").clear()
-# 	page.ele("#sd").input(SD)
-# else:
-# 	page.ele(". css-4o2p2z-menu").ele("text:Disabled").click()
-
-# textbox
-# gnb_id = page.ele("#gnb_id")
-# gnb_id.clear()
-# gnb_id.input("7128")
-
-# checkbox
-# modulation = "QAM256"
-# layer = "2"
-# drms = "pos2"
-# page.ele(f"tag:label@@for:{modulation}").click()
-
-# if layer == "1":
-# 	page.ele(f"tag:label@@for:One layer").click()
-# else:
-# 	page.ele(f"tag:label@@for:Two layer").click()
-
-# if drms == "pos1":
-# 	page.ele(f"tag:label@@for:Pos1").click()
-# else:
-# 	page.ele(f"tag:label@@for:Pos2").click()
-
-
 # ----------------------Modify parameters----------------------
 
 msgLogger("ready to start modifying parameters")
@@ -201,6 +162,8 @@ if isASK:
 for key, value in provision.items():
 	if key == "EPSFB" or key == "POWER":
 		continue
+
+	# switch gNB CU and DU
 	if (key.lower() in CU_list) != isCU:
 		page.ele("tag:div@@class:switchBtn").click()
 		isCU = not isCU
