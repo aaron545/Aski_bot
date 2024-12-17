@@ -256,3 +256,29 @@ msgLogger("cfm_box is visible...")
 
 cfm_box.ele("tag:a@@name:box_ok").click()
 msgLogger("finish! reboot now...")
+
+
+# ----------------------Ready to add----------------------
+# page.ele("tag:a@@href=/configuration/gNB").click()
+# loading(page, "gNB page")
+# page.ele("tag:a@@href=/configuration/gNBCustomization").click()
+# loading(page, "gNBCustomization page")
+# page.ele("#id_Edit").click()
+
+# with open("custom.txt", 'r') as f:
+# 	# help here
+# 	text = f.read()
+# page.ele("#customization_content").input(text)
+# page.ele("#id_Save").click()
+# page.ele("#cfm_box").ele("tag:a@@name:box_ok").click()
+# time.sleep(1)
+# loading(page, "cfm_box block")
+
+# msgLogger("waiting for cfm_box visible...")
+
+# cfm_box = page.ele("#cfm_box")
+# while cfm_box.attr("aria-hidden") == "true":
+# 	cfm_box = page.ele("#cfm_box")
+# 	time.sleep(1)
+# msgLogger("cfm_box is visible...")
+# cfm_box.ele("tag:a@@name:box_ok").click()
