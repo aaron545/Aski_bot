@@ -69,6 +69,13 @@ if qam_file:
 with open("config.json", 'r') as f:
 	config = Config(**json.load(f))
 
+if args.custom is not "":
+	with open(args.custom, 'r') as f:
+		text = f.read()
+	isCustom = True
+else:
+	isCustom = False
+
 CU_list = ["gnb_n2_ip", "gnb_n3_ip", "gnb_id", "gnb_id_length", "cell_id", "tac", "mcc", "mnc", "amf_ip"]
 DU_list = ["sst", "sd", "nr_band", "physical_cell_id", "modulation", "layer", "drms","bandwidth", "nrarfcn", "timeslot"]
 
@@ -123,16 +130,38 @@ msgLogger("get software version info...")
 software_version_info = page.ele("#software_version").text
 isN3 = True if any(target in software_version_info for target in N3_targets) else False
 
+# ----------------------Customization config----------------------
+if isCustom:
+	msgLogger("ready to setting customization config")
+	if "configuration" not in page.url:
+		page.ele("tag:a@@href=/configuration/gNB").click()
+		loading(page, "gNB page")
+	page.ele("tag:a@@href=/configuration/gNBCustomization").click()
+	loading(page, "gNBCustomization page")
+	page.ele("#id_Edit").click()
+
+	textbox = page.ele("#customization_content")
+	if textbox.text is not None:
+		textbox.clear()
+	textbox.input(text)
+	
+	page.ele("#id_Save").click()
+	page.ele("#cfm_box").ele("tag:a@@name:box_ok").click()
+	time.sleep(1)
+	loading(page, "cfm_box block")
+	msgLogger("cfm_box is visible...")
+
+	page.ele("#cfm_box").ele("tag:a@@name:box_x").click()
+	time.sleep(1)
+
 # ----------------------Switch to configuration----------------------
 msgLogger("switch to gNB configuration...")
-while page.url != root+"/configuration/gNB":
-	page.ele("tag:a@@href=/configuration/gNB").click()
-	time.sleep(2)
+page.ele("tag:a@@href=/configuration/gNB").click()
+time.sleep(1)
+loading(page, "gNB page")
 
 # ----------------------Modify parameters----------------------
-
 msgLogger("ready to start modifying parameters")
-loading(page, "gNB page")
 
 # current is CU or DU page
 styleAttr = page.ele("tag:div@@class:switchBtn").attr("style")
@@ -248,29 +277,3 @@ msgLogger("cfm_box is visible...")
 
 page.ele("#cfm_box").ele("tag:a@@name:box_ok").click()
 msgLogger("finish! reboot now...")
-
-
-# ----------------------Ready to add----------------------
-# page.ele("tag:a@@href=/configuration/gNB").click()
-# loading(page, "gNB page")
-# page.ele("tag:a@@href=/configuration/gNBCustomization").click()
-# loading(page, "gNBCustomization page")
-# page.ele("#id_Edit").click()
-
-# with open("custom.txt", 'r') as f:
-# 	# help here
-# 	text = f.read()
-# page.ele("#customization_content").input(text)
-# page.ele("#id_Save").click()
-# page.ele("#cfm_box").ele("tag:a@@name:box_ok").click()
-# time.sleep(1)
-# loading(page, "cfm_box block")
-
-# msgLogger("waiting for cfm_box visible...")
-
-# cfm_box = page.ele("#cfm_box")
-# while cfm_box.attr("aria-hidden") == "true":
-# 	cfm_box = page.ele("#cfm_box")
-# 	time.sleep(1)
-# msgLogger("cfm_box is visible...")
-# cfm_box.ele("tag:a@@name:box_ok").click()
