@@ -3,8 +3,8 @@ Device.Services.X_RSYS_BSR.HgNB.CU.1.EPNGC.2.ObjectClass,EP_NgC,create
 Device.Services.X_RSYS_BSR.HgNB.CU.1.EPNGC.2.ObjectInstance,1,create
 Device.Services.X_RSYS_BSR.HgNB.CU.1.EPNGC.2.Id,1,create
 Device.Services.X_RSYS_BSR.HgNB.CU.1.EPNGC.2.UserLabel,EP_NgC,create
-Device.Services.X_RSYS_BSR.HgNB.CU.1.EPNGC.2.LocalIpAddress,10.1.108.118,create
-Device.Services.X_RSYS_BSR.HgNB.CU.1.EPNGC.2.RemoteAddress,10.1.106.52,create
+Device.Services.X_RSYS_BSR.HgNB.CU.1.EPNGC.2.LocalIpAddress,1.1.1.1,create
+Device.Services.X_RSYS_BSR.HgNB.CU.1.EPNGC.2.RemoteAddress,1.1.1.1,create
 Device.Services.X_RSYS_BSR.HgNB.CU.1.EPNGC.2.AMFRegionid,01111111,create
 Device.Services.X_RSYS_BSR.HgNB.CU.1.EPNGC.2.AMFSetid,0111111101,create
 Device.Services.X_RSYS_BSR.HgNB.CU.1.EPNGC.2.AMFPointer,011111,create
