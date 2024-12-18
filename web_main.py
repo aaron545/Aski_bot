@@ -47,6 +47,7 @@ default_radio = "radio.json"
 parser = argparse.ArgumentParser(description="Load configuration files")
 parser.add_argument("-p", "--provisions", nargs="*",default=default_provision, help="List of provision files to load")
 parser.add_argument("-r", "--radio", nargs="?", default=default_radio, help="radio file to load, default is \"N78 100MHz 4:1\"")
+parser.add_argument("-c", "--custom", nargs="?", default="", help="customization config to load")
 args = parser.parse_args()
 
 qam_file = [file for file in args.provisions if "QAM" in file]
@@ -240,21 +241,12 @@ msgLogger("finish!!!")
 # save config
 msgLogger("save config...")
 page.ele("#id_Save").click()
+page.ele("#cfm_box").ele("tag:a@@name:box_ok").click()
 time.sleep(1)
-
-cfm_box = page.ele("#cfm_box")
-if cfm_box.attr("aria-hidden") != "true":
-	cfm_box.ele("tag:a@@name:box_ok").click()
-	time.sleep(1)
-msgLogger("waiting for cfm_box visible...")
-
-cfm_box = page.ele("#cfm_box")
-while cfm_box.attr("aria-hidden") == "true":
-	cfm_box = page.ele("#cfm_box")
-	time.sleep(1)
+loading(page, "cfm_box block")
 msgLogger("cfm_box is visible...")
 
-cfm_box.ele("tag:a@@name:box_ok").click()
+page.ele("#cfm_box").ele("tag:a@@name:box_ok").click()
 msgLogger("finish! reboot now...")
 
 
