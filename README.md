@@ -1,5 +1,14 @@
 # How to use this bot
 
+## What can you do in this bot
+
+**v1.2.0**
+for web: You can automatically set the parameters of "gNB customization"
+
+**v1.1.0**
+for web: You can automatically set the parameters of "gNB configuration"
+for amp: You can automatically set the provision page of "SA and Deployment"
+
 ## Config
 
 Edit content of `sample_config.json` and rename it as `config.json`.
