@@ -9,6 +9,7 @@ for web: You can automatically set the parameters of "gNB customization"
 ### **v1.1.0**
 
 for web: You can automatically set the parameters of "gNB configuration"
+
 for amp: You can automatically set the provision page of "SA and Deployment"
 
 ## Config
