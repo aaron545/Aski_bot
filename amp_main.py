@@ -216,28 +216,6 @@ time.sleep(2)
 # print("before:")
 # get_SA_value()
 # ----------------------set feature value----------------------
-# for textbox
-
-# element = li_elements[0].ele('tag:input@@type:text', timeout = 0.1)
-# element.clear(by_js = True)
-# value = element.run_js('return this.value')
-# # print(Li_SA(0).name, ":", value)
-# time.sleep(0.2)
-# element.input('7128')
-# value = element.run_js('return this.value')
-# # print(Li_SA(0).name, ":", value)
-
-# # for selectmenu
-# value = 'QAM256'
-# li_elements[12].ele('tag:button', timeout = 0.1).run_js('this.click()', timeout = 0.1)
-# page.ele(f'xpath://a[contains(text(), "{value}")]')
-# element = page.ele(f'tag:a@@text():{value}')
-# element.click()
-
-# if li_elements[Li_SA.ADMIN_STATE].ele("@@class:text-truncate@@class:badge-pill").text != "Product":
-# 	li_elements[Li_SA.ADMIN_STATE].ele(".ng-star-inserted").click()
-
-
 msgLogger("setting the SA configs...")
 tab = page.eles('@class:nav-item ng-star-inserted')
 tab[TAB.SA].click()
@@ -256,26 +234,6 @@ set_DEPLOY_value(radio, li_elements)
 # get_SA_value()
 
 # ----------------------print feature value----------------------
-
-# if len(li_elements) == len(Li_SA):
-# 	for feature in Li_SA:
-# 		try:	
-# 			# for textbox
-# 			element = li_elements[feature.value].ele('tag:input@@type:text', timeout = 0.1)
-# 			value = element.run_js('return this.value')
-# 			print(feature.name, ":", value)
-# 		except:
-# 			# for selectmenu
-# 			try:
-# 				element = li_elements[feature.value].ele('tag:button', timeout = 0.1)
-# 				print(feature.name, ":", element.text)
-# 			except:
-# 				pass
-# 		finally:
-# 			pass
-# else:
-# 	print('Length is inconsistent, please fix the code.')
-
 
 # download csv
 # page.ele('tag:label@for=download-default').click()
