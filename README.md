@@ -32,4 +32,8 @@ Edit content of `sample_config.json` and rename it as `config.json`.
 
 Please run `python amp_main.py --help` or `python web_main.py --help` to view the options.
 
-for example: `python web_main.py -p BASIC.json QAM256_2L.json -r ratio.json`
+for example: 
+
+if you want to test DDDSU 256QAM 2L pos1 100MHz, you can modify ratio.json and do the command:
+
+`python web_main.py -p BASIC.json QAM256_2L.json -r ratio.json`
