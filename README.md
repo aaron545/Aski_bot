@@ -1,5 +1,11 @@
 # How to use this bot
 
+## Installing Dependencies by requirements.txt
+
+It automatically downloads and installs the specified libraries:
+
+`pip install -r requirements.txt`
+
 ## What can you do in this bot
 
 ### **v1.2.0**
