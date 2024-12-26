@@ -154,11 +154,15 @@ download_directory = os.path.dirname(__file__)
 co = ChromiumOptions()
 co.set_pref('download.default_directory', download_directory)
 co.set_argument('--window-size', '1920,1080')
-co.set_browser_path('../chrome-win/chrome.exe')
-# co.set_browser_path("C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe")
 co.ignore_certificate_errors()
 co.incognito()
 # co.headless()
+
+if os.path.exists('../chrome-win/chrome.exe'):
+	co.set_browser_path('../chrome-win/chrome.exe')
+	
+elif os.path.exists("C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe"):
+	co.set_browser_path("C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe")
 
 page = ChromiumPage(co)
 # atexit.register(close_driver, page)
