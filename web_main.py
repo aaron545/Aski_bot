@@ -90,9 +90,8 @@ co = ChromiumOptions()
 co.set_argument('--window-size', '1920,1080')
 try:
 	co.set_browser_path('../chrome-win/chrome.exe')
-	# co.set_browser_path("C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe")
 except:
-	pass
+	co.set_browser_path("C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe")
 co.set_timeouts(base=10)
 co.ignore_certificate_errors()
 co.incognito()
