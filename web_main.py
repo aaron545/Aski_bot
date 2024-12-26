@@ -88,8 +88,11 @@ N3_targets = ["SCE2200", "SCU2050", "SCU2060", "SCU2070", "SCU5000"]
 
 co = ChromiumOptions()
 co.set_argument('--window-size', '1920,1080')
-co.set_browser_path('../chrome-win/chrome.exe')
-# co.set_browser_path("C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe")
+try:
+	co.set_browser_path('../chrome-win/chrome.exe')
+	# co.set_browser_path("C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe")
+except:
+	pass
 co.set_timeouts(base=10)
 co.ignore_certificate_errors()
 co.incognito()
@@ -97,7 +100,6 @@ co.incognito()
 
 page = ChromiumPage(co)
 root = config.web_root
-# root = "https://10.1.108.129"
 
 if page.url != root:
 	page.get(root)
