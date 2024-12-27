@@ -54,7 +54,7 @@ with open("BASIC.json", 'r') as f:
 	provision.update(Config(**json.load(f)).__dict__)
 
 if args.provision is not "":
-	with open("provision/"+args.provision, 'r') as f:
+	with open("unit_test/"+args.provision, 'r') as f:
 		provision.update(Config(**json.load(f)).__dict__)
 
 uplink_list = ['MODULATION', 'LAYER', 'DRMS']
