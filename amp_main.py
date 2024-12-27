@@ -130,20 +130,23 @@ class Config:
 		for key, value in kwargs.items():
 			setattr(self, key, value)
 
-default_provision = ["BASIC.json", "QAM256_2L.json"]
-default_radio = "radio.json"
+# default_provision = ["BASIC.json", "QAM256_2L.json"]
+# default_radio = "radio.json"
 
 parser = argparse.ArgumentParser(description="Load configuration files")
-parser.add_argument("-p", "--provisions", nargs="*",default=default_provision, help="List of provision files to load")
-parser.add_argument("-r", "--radio", nargs="?", default=default_radio, help="radio file to load, default is \"N78 100MHz 4:1\"")
+parser.add_argument("-p", "--provision", nargs="?",default="", help="additional provision file to load")
 args = parser.parse_args()
 
 provision = {}
-for file in args.provisions:
-	with open(file, 'r') as f:
+with open("BASIC.json", 'r') as f:
+	provision.update(Config(**json.load(f)).__dict__)
+
+if args.provision is not "":
+	with open(args.provision, 'r') as f:
 		provision.update(Config(**json.load(f)).__dict__)
-with open(args.radio, 'r') as f:
-	radio = Config(**json.load(f)).__dict__
+
+radio_list = ['NR_BAND', 'BANDWIDTH', 'TIMESLOT']
+radio = {key: provision.pop(key) for key in radio_list}
 
 
 with open("config.json", 'r') as f:
