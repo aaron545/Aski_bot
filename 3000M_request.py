@@ -1,6 +1,7 @@
 import requests
 import json
 import subprocess
+import time
 
 def getResponse():
     # 用戶名和密碼
@@ -47,20 +48,31 @@ def getResponse():
                     return signal_info
                 else:
                     print("Failed to get signal_info config.")
+                    return "Fail"
             else:
                 print(f"Failed to fetch signal_info. HTTP status code: {get_response.status_code}")
+                return "Fail"
 
         else:
             print("Login failed!")
+            return "Fail"
 
     except requests.exceptions.RequestException as e:
         print(f"HTTP request failed: {e}")
+        return "Fail"
 
 if __name__ == "__main__":
     signal_info = getResponse()
-    pci = signal_info.get('Result', {}).get('5g_pci', 'Key not found')
+    pci = signal_info.get('Result', {}).get('5g_pci', {})
     print(f"5G PCI: {pci}")
-    if pci is not 'Key not found' or not None:
+    while pci == "0" or pci == 'N/A':
+        print("CPE is disconnect...")
+        time.sleep(10)
+        signal_info = getResponse() 
+        pci = signal_info.get('Result', {}).get('5g_pci', {})
+        print(f"5G PCI: {pci}")
+
+    if pci != "0" and pci != 'N/A':
         print("start iperf")
         iperf_command = [
             "iperf3",
@@ -69,13 +81,17 @@ if __name__ == "__main__":
             "-P", "1",
             "-t", "30",
             "-p", "10602",
-            
+            "-R",
         ]
         try:
-            result = subprocess.run(iperf_command, capture_output=True, text=True)
-            print("iperf3 command output:")
-            print("STDOUT:", result.stdout)
-            print("STDERR:", result.stderr)
+            for i in range(5):
+                print("The "+str(i+1)+" time try :")
+                result = subprocess.run(iperf_command, capture_output=True, text=True)
+                print("STDOUT:", result.stdout)
+                print("STDERR:", result.stderr)
+                if result.stdout:
+                    break
+
         except FileNotFoundError:
             print("iperf3 is not installed or not in PATH.")
         except Exception as e:
