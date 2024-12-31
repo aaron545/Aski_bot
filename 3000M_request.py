@@ -2,6 +2,7 @@ import requests
 import json
 import subprocess
 import time
+from datetime import datetime
 
 def getResponse():
     # 用戶名和密碼
@@ -90,6 +91,10 @@ if __name__ == "__main__":
                 print("STDOUT:", result.stdout)
                 print("STDERR:", result.stderr)
                 if result.stdout:
+                    current_time = datetime.now().strftime("%Y%m%d-%H%M")
+                    file_name = f"{current_time}.txt"
+                    with open("iperf_log/"+file_name, "x") as f:
+                        f.write(result.stdout)
                     break
 
         except FileNotFoundError:
