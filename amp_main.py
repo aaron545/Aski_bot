@@ -25,6 +25,7 @@ def close_driver(page):
 
 def set_SA_value(features, li_elements):
 	for key, value in features.items():
+		print(key, ":", value)
 		try:	
 			# for textbox
 			element = li_elements[Li_SA[key]].ele('tag:input@@type:text', timeout = 0.1)
@@ -68,6 +69,7 @@ def get_SA_value():
 def set_DEPLOY_value(features, li_elements):
 	is3ms = False
 	for key, value in features.items():
+		print(key, ":", value)
 		li_elements[Li_DEPLOY[key]].ele('tag:button', timeout = 0.1).run_js('this.click()', timeout = 0.1)
 		time.sleep(0.2)
 		page.ele('@class:dropdown-menu show').ele(f'tag:a@@text():{value}').click()
@@ -157,6 +159,7 @@ download_directory = os.path.dirname(__file__)
 co = ChromiumOptions()
 co.set_pref('download.default_directory', download_directory)
 co.set_argument('--window-size', '1920,1080')
+co.set_timeouts(base=10)
 co.ignore_certificate_errors()
 co.incognito()
 # co.headless()

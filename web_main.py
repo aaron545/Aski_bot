@@ -41,9 +41,6 @@ class ASK_IPSEC_SD_select(IntEnum):
 	AuthenticationType = auto()
 	SD = auto()
 
-default_provision = ["BASIC.json", "QAM256_2L.json"]
-default_radio = "radio.json"
-
 parser = argparse.ArgumentParser(description="Load configuration files")
 parser.add_argument("-p", "--provision", nargs="?",default="", help="additional provision file to load")
 parser.add_argument("-c", "--custom", nargs="?", default="", help="customization config to load")
