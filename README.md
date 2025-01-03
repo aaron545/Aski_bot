@@ -8,6 +8,10 @@ It automatically downloads and installs the specified libraries:
 
 ## What can you do in this bot
 
+### **v1.5.1**
+
+for web: You can automatically set the parameters of "RF Antenna"
+
 ### **v1.2.0**
 
 for web: You can automatically set the parameters of "gNB customization"
