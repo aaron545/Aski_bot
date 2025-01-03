@@ -41,6 +41,10 @@ class ASK_IPSEC_SD_select(IntEnum):
 	AuthenticationType = auto()
 	SD = auto()
 
+class RF(IntEnum):
+	RFPower = 0
+	AntennaPath = auto()
+
 parser = argparse.ArgumentParser(description="Load configuration files")
 parser.add_argument("-p", "--provision", nargs="?",default="", help="additional provision file to load")
 parser.add_argument("-c", "--custom", nargs="?", default="", help="customization config to load")
@@ -149,6 +153,51 @@ if isCustom:
 
 	page.ele("#cfm_box").ele("tag:a@@name:box_x").click()
 	time.sleep(1)
+else :
+	msgLogger("Not need to add customization config...")
+# ----------------------Set RF----------------------
+msgLogger("ready to setting RF Antenna")
+if "configuration" not in page.url:
+	page.ele("tag:a@@href=/configuration/gNB").click()
+	loading(page, "gNB page")
+
+msgLogger("switch to RF Antenna...")
+page.ele("tag:a@@href=/configuration/rf").click()
+time.sleep(1)
+loading(page, "RF Antenna page")
+
+saveRF = False
+
+RFSelectmenu = page.eles(". css-b62m3t-container")
+if RFSelectmenu[RF["RFPower"]].text == "OFF":
+	RFSelectmenu[RF["RFPower"]].click()
+	page.ele(". css-4o2p2z-menu").ele("text:ON").click()
+	time.sleep(0.5)
+	saveRF = True
+
+TXPower = page.ele("#max_tx_power")
+if float(provision["POWER"])/10 != float(TXPower.attr("value")):
+	TXPower.clear()
+	TXPower.input(float(provision["POWER"])/10)
+	saveRF = True
+
+if RFSelectmenu[RF["AntennaPath"]].text == "External":
+	RFSelectmenu[RF["AntennaPath"]].click()
+	page.ele(". css-4o2p2z-menu").ele("text:Internal").click()
+	time.sleep(0.5)
+	saveRF = True
+
+if saveRF:
+	msgLogger("save RF Antenna...")
+	page.ele("#id_Save").click()
+	page.ele("#cfm_box").ele("tag:a@@name:box_ok").click()
+	time.sleep(1)
+	loading(page, "msg_box block")
+	msgLogger("msg_box is visible...")
+
+	page.ele("@class:modal fade show").ele("tag:a@@name:box_ok").click()
+else:
+	msgLogger("Not need to modify RF Antenna...")
 
 # ----------------------Switch to configuration----------------------
 msgLogger("switch to gNB configuration...")
