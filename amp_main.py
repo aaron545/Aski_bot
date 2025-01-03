@@ -173,7 +173,7 @@ elif os.path.exists("C:/Program Files (x86)/Microsoft/Edge/Application/msedge.ex
 page = ChromiumPage(co)
 # atexit.register(close_driver, page)
 
-page.get(config.login_url, timeout = 10)
+page.get(config.login_url)
 msgLogger("waiting for get amp page...")
 
 # -----------------------login-----------------------
