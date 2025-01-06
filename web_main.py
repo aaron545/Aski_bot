@@ -169,8 +169,8 @@ loading(page, "RF Antenna page")
 saveRF = False
 
 RFSelectmenu = page.eles(". css-b62m3t-container")
-if RFSelectmenu[RF["RFPower"]].text == "OFF":
-	RFSelectmenu[RF["RFPower"]].click()
+if RFSelectmenu[RF.RFPower].text == "OFF":
+	RFSelectmenu[RF.RFPower].click()
 	page.ele(". css-4o2p2z-menu").ele("text:ON").click()
 	time.sleep(0.5)
 	saveRF = True
@@ -181,8 +181,8 @@ if float(provision["POWER"])/10 != float(TXPower.attr("value")):
 	TXPower.input(float(provision["POWER"])/10)
 	saveRF = True
 
-if RFSelectmenu[RF["AntennaPath"]].text == "External":
-	RFSelectmenu[RF["AntennaPath"]].click()
+if RFSelectmenu[RF.AntennaPath].text == "External":
+	RFSelectmenu[RF.AntennaPath].click()
 	page.ele(". css-4o2p2z-menu").ele("text:Internal").click()
 	time.sleep(0.5)
 	saveRF = True
