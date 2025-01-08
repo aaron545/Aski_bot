@@ -211,7 +211,7 @@ msgLogger("ready to start modifying parameters")
 # current is CU or DU page
 styleAttr = page.ele("tag:div@@class:switchBtn").attr("style")
 styleValue = re.search(r"left:\s*(\d+)px", styleAttr).group(1)
-isCU = True if int(styleValue) > 50 else False
+isCU = True if int(styleValue) > 50 else False # CU: 217px / DU 3px
 
 # switch between remote and local
 Method = "local"
