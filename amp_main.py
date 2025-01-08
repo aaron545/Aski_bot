@@ -67,21 +67,23 @@ def get_SA_value():
 		print('Length is inconsistent, please fix the code.')
 
 def set_DEPLOY_value(features, li_elements):
-	is3ms = False
+	timingOffset = ["0s", "3ms", "1.94896ms"]
 	for key, value in features.items():
 		print(key, ":", value)
-		li_elements[Li_DEPLOY[key]].ele('tag:button', timeout = 0.1).run_js('this.click()', timeout = 0.1)
+		li_elements[Li_DEPLOY[key]].ele('tag:button', timeout = 0.1).click()
+		# li_elements[Li_DEPLOY[key]].ele('tag:button', timeout = 0.1).run_js('this.click()', timeout = 0.1)
 		time.sleep(0.2)
 		page.ele('@class:dropdown-menu show').ele(f'tag:a@@text():{value}').click()
 		if key == "TIMESLOT" and value == "DDDDDDDSUU":
-			is3ms = True
+			tOIdx = 1
+		elif key == "TIMESLOT" and value != "DDDDDDDSUU":
+			tOIdx = 0
 
 	msgLogger("check 3ms timing offset...")
-	time.sleep(0.5)
-	offset_element = page.ele('tag:ul@class:list-group').eles('tag:li')[Li_DEPLOY.OFFSET]
-	isOffset = True if offset_element.ele("@@class:text-truncate@@class:badge-pill").text == "Product" else False
-	if not is3ms and isOffset:
-		offset_element.ele(".ng-star-inserted").click()
+	time.sleep(0.2)
+	li_elements[Li_DEPLOY.TIMING_OFFSET].ele('tag:button', timeout = 0.1).click()
+	time.sleep(0.2)
+	page.ele('@class:dropdown-menu show').ele(f'tag:a@@text():{timingOffset[tOIdx]}').click()
 
 class MENU(IntEnum):
 	LIVE_UPDATE = 0
@@ -119,7 +121,7 @@ class Li_SA(IntEnum):
 	ADMIN_STATE = auto()
 
 class Li_DEPLOY(IntEnum):
-	OFFSET = 0
+	TIMING_OFFSET = 0
 	DEPLOYMENT_MODE = auto()
 	NR_BAND = auto()
 	BANDWIDTH = auto()
