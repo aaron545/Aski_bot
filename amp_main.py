@@ -47,24 +47,25 @@ def set_SA_value(features, li_elements):
 
 
 def get_SA_value():
-	if len(li_elements) == len(Li_SA):
-		for feature in Li_SA:
-			try:	
-				# for textbox
-				element = li_elements[feature.value].ele('tag:input@@type:text', timeout = 0.1)
-				value = element.run_js('return this.value')
-				print(feature.name, ":", value)
-			except:
-				# for selectmenu
-				try:
-					element = li_elements[feature.value].ele('tag:button', timeout = 0.1)
-					print(feature.name, ":", element.text)
-				except:
-					pass
-			finally:
-				pass
-	else:
+	if len(li_elements) != len(Li_SA):
 		print('Length is inconsistent, please fix the code.')
+		
+	for feature in Li_SA:
+		try:	
+			# for textbox
+			element = li_elements[feature.value].ele('tag:input@@type:text', timeout = 0.1)
+			value = element.run_js('return this.value')
+			print(feature.name, ":", value)
+		except:
+			# for selectmenu
+			try:
+				element = li_elements[feature.value].ele('tag:button', timeout = 0.1)
+				print(feature.name, ":", element.text)
+			except:
+				pass
+		finally:
+			pass
+		
 
 def set_DEPLOY_value(features, li_elements):
 	timingOffset = ["0s", "3ms", "1.94896ms"]
