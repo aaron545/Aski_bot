@@ -23,7 +23,7 @@ def close_driver(page):
 	page.quit()
 	print("close!")
 
-def set_SA_value(features, li_elements):
+def set_SA_value(page, features, li_elements):
 	for key, value in features.items():
 		print(key, ":", value)
 		try:	
@@ -67,7 +67,7 @@ def get_SA_value():
 			pass
 		
 
-def set_DEPLOY_value(features, li_elements):
+def set_DEPLOY_value(page, features, li_elements):
 	timingOffset = ["0s", "3ms", "1.94896ms"]
 	for key, value in features.items():
 		print(key, ":", value)
@@ -138,132 +138,142 @@ class Config:
 # default_provision = ["BASIC.json", "QAM256_2L.json"]
 # default_radio = "radio.json"
 
-parser = argparse.ArgumentParser(description="Load configuration files")
-parser.add_argument("-p", "--provision", nargs="?",default="", help="additional provision file to load")
-args = parser.parse_args()
+def main(args=None):
+	if args is None:
+		parser = argparse.ArgumentParser(description="Load configuration files")
+		parser.add_argument("-p", "--provision", nargs="?",default="", help="additional provision file to load")
+		args = parser.parse_args()
+	else:
+		# print(args)
+		args = argparse.Namespace(**args)
+		print(args.provision)
 
-provision = {}
-with open("BASIC.json", 'r') as f:
-	provision.update(Config(**json.load(f)).__dict__)
-
-if args.provision is not "":
-	with open("unit_test/"+args.provision, 'r') as f:
+	provision = {}
+	with open("BASIC.json", 'r') as f:
 		provision.update(Config(**json.load(f)).__dict__)
 
-radio_list = ['NR_BAND', 'BANDWIDTH', 'TIMESLOT']
-radio = {key: provision.pop(key) for key in radio_list}
+	if args.provision is not "":
+		with open("unit_test/"+args.provision, 'r') as f:
+			provision.update(Config(**json.load(f)).__dict__)
+
+	radio_list = ['NR_BAND', 'BANDWIDTH', 'TIMESLOT']
+	radio = {key: provision.pop(key) for key in radio_list}
 
 
-with open("config.json", 'r') as f:
-	data = json.load(f)
-config = Config(**data)
+	with open("config.json", 'r') as f:
+		data = json.load(f)
+	config = Config(**data)
 
-download_directory = os.path.dirname(__file__)
-co = ChromiumOptions()
-co.set_pref('download.default_directory', download_directory)
-co.set_argument('--window-size', '1920,1080')
-co.set_timeouts(base=10)
-co.ignore_certificate_errors()
-co.incognito()
-# co.headless()
+	download_directory = os.path.dirname(__file__)
+	co = ChromiumOptions()
+	co.set_pref('download.default_directory', download_directory)
+	co.set_argument('--window-size', '1920,1080')
+	co.set_timeouts(base=10)
+	co.ignore_certificate_errors()
+	co.incognito()
+	# co.headless()
 
-if os.path.exists('../chrome-win/chrome.exe'):
-	co.set_browser_path('../chrome-win/chrome.exe')
-	
-elif os.path.exists("C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe"):
-	co.set_browser_path("C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe")
+	if os.path.exists('../chrome-win/chrome.exe'):
+		co.set_browser_path('../chrome-win/chrome.exe')
+		
+	elif os.path.exists("C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe"):
+		co.set_browser_path("C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe")
 
-page = ChromiumPage(co)
-# atexit.register(close_driver, page)
+	page = ChromiumPage(co)
+	# atexit.register(close_driver, page)
 
-page.get(config.login_url)
-msgLogger("waiting for get amp page...")
+	page.get(config.login_url)
+	msgLogger("waiting for get amp page...")
 
-# -----------------------login-----------------------
+	# -----------------------login-----------------------
 
-# input user
-page.ele('tag:input@formcontrolname=email').input(config.user)
+	# input user
+	page.ele('tag:input@formcontrolname=email').input(config.user)
 
-# input password
-page.ele('tag:input@formcontrolname=password').input(config.amp_password)
+	# input password
+	page.ele('tag:input@formcontrolname=password').input(config.amp_password)
 
-# sign in
-page.ele('tag:button@@text():Sign in').click()
-msgLogger("waiting for login...")
-
-
-# -----------------------searchSN-----------------------
-time.sleep(1)
-try:
-	button_device = page.ele('@class:avatar bg-light-primary p-50 m-0')
-except:
-	button_device = page.ele('tag:a@href=#/devices', timeout = 2)
-
-button_device.click()
-msgLogger("switch to devices page...")
+	# sign in
+	page.ele('tag:button@@text():Sign in').click()
+	msgLogger("waiting for login...")
 
 
-serial_number = config.serial_number
-try:
-	tb_serial_number = page.ele('tag:datatable-header-cell@style:211.962px').ele('tag:input@type=text')
-except:
-	tb_serial_number = page.ele('tag:datatable-header-cell@style:204.038px').ele('tag:input@type=text')
+	# -----------------------searchSN-----------------------
+	time.sleep(1)
+	try:
+		button_device = page.ele('@class:avatar bg-light-primary p-50 m-0')
+	except:
+		button_device = page.ele('tag:a@href=#/devices', timeout = 2)
 
-msgLogger("searching SN...")
-tb_serial_number.input(serial_number)
-
-time.sleep(2)
-# loc = (By.XPATH, f'//div[@class="text-truncate ng-star-inserted" and contains(text(), "{serial_number}")]')
-# link_small_cell = page.ele(loc)
-link_small_cell = page.ele(f'@@class:text-truncate ng-star-inserted@@text():{serial_number}')
-link_small_cell.click()
-
-button_menu = page.eles('@@class:btn@@class:btn-primary@@class:ng-star-inserted')
-button_menu[MENU.PROVISIONING].click()
-msgLogger("opening the provisoning page...")
-time.sleep(2)
+	button_device.click()
+	msgLogger("switch to devices page...")
 
 
-# tab = page.eles('@class:nav-item ng-star-inserted')
+	serial_number = config.serial_number
+	try:
+		tb_serial_number = page.ele('tag:datatable-header-cell@style:211.962px').ele('tag:input@type=text')
+	except:
+		tb_serial_number = page.ele('tag:datatable-header-cell@style:204.038px').ele('tag:input@type=text')
 
-# print("before:")
-# get_SA_value()
-# ----------------------set feature value----------------------
-msgLogger("setting the SA configs...")
-tab = page.eles('@class:nav-item ng-star-inserted')
-tab[TAB.SA].click()
-time.sleep(0.5)
-li_elements = page.ele('tag:ul@class:list-group').eles('tag:li')
-set_SA_value(provision, li_elements)
+	msgLogger("searching SN...")
+	tb_serial_number.input(serial_number)
 
-msgLogger("setting the radio config...")
-tab = page.eles('@class:nav-item ng-star-inserted')
-tab[TAB.DEPLOYMENT].click()
-time.sleep(0.5)
-li_elements = page.ele('tag:ul@class:list-group').eles('tag:li')
-set_DEPLOY_value(radio, li_elements)
+	time.sleep(2)
+	# loc = (By.XPATH, f'//div[@class="text-truncate ng-star-inserted" and contains(text(), "{serial_number}")]')
+	# link_small_cell = page.ele(loc)
+	link_small_cell = page.ele(f'@@class:text-truncate ng-star-inserted@@text():{serial_number}')
+	link_small_cell.click()
 
-# print("\nafter:")
-# get_SA_value()
+	button_menu = page.eles('@@class:btn@@class:btn-primary@@class:ng-star-inserted')
+	button_menu[MENU.PROVISIONING].click()
+	msgLogger("opening the provisoning page...")
+	time.sleep(2)
 
-# ----------------------print feature value----------------------
 
-# download csv
-# page.ele('tag:label@for=download-default').click()
-# time.sleep(2)
+	# tab = page.eles('@class:nav-item ng-star-inserted')
 
-# save provision
-msgLogger("saving the provision page...")
-page.ele('tag:button@@text():Apply').click()
+	# print("before:")
+	# get_SA_value()
+	# ----------------------set feature value----------------------
+	msgLogger("setting the SA configs...")
+	tab = page.eles('@class:nav-item ng-star-inserted')
+	tab[TAB.SA].click()
+	time.sleep(0.5)
+	li_elements = page.ele('tag:ul@class:list-group').eles('tag:li')
+	set_SA_value(page, provision, li_elements)
 
-# close provision
-# msgLogger("closing the provision page...")
-# button_close = page.eles('.close')
-# button_close[1].click()
+	msgLogger("setting the radio config...")
+	tab = page.eles('@class:nav-item ng-star-inserted')
+	tab[TAB.DEPLOYMENT].click()
+	time.sleep(0.5)
+	li_elements = page.ele('tag:ul@class:list-group').eles('tag:li')
+	set_DEPLOY_value(page, radio, li_elements)
 
-time.sleep(1)
-# button_menu = page.eles('@@class:btn@@class:btn-primary@@class:ng-star-inserted')
-# button_menu[menu.REBOOT].click()
-# page.ele('tag:button@@text():OK').click()
+	# print("\nafter:")
+	# get_SA_value()
 
-# time.sleep(200)
+	# ----------------------print feature value----------------------
+
+	# download csv
+	# page.ele('tag:label@for=download-default').click()
+	# time.sleep(2)
+
+	# save provision
+	msgLogger("saving the provision page...")
+	page.ele('tag:button@@text():Apply').click()
+
+	# close provision
+	# msgLogger("closing the provision page...")
+	# button_close = page.eles('.close')
+	# button_close[1].click()
+
+	time.sleep(1)
+	button_menu = page.eles('@@class:btn@@class:btn-primary@@class:ng-star-inserted')
+	button_menu[MENU.REBOOT].click()
+	page.ele('tag:button@@text():OK').click()
+	msgLogger("finish! reboot now...")
+
+	# time.sleep(200)
+
+if __name__ == "__main__":
+    main()

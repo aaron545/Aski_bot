@@ -8,6 +8,10 @@ It automatically downloads and installs the specified libraries:
 
 ## What can you do in this bot
 
+### **v2.1.0**
+
+add the `ui.py` to control the bot
+
 ### **v1.5.1**
 
 for web: You can automatically set the parameters of "RF Antenna"
@@ -41,5 +45,9 @@ Edit content of `sample_config.json` and rename it as `config.json`.
 ## Commands
 
 Please run `python amp_main.py --help` or `python web_main.py --help` to view the options.
+
+or
+
+run `ui.py` to use this bot
 
 P.S. BASIC is **DDDSU 100MHz 256QAM 2L pos1**
