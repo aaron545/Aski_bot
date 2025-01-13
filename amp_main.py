@@ -92,7 +92,8 @@ class MENU(IntEnum):
 	UPGRADE_FIRMWARE = auto()
 
 class TAB(IntEnum):
-	SA = 2
+	MUTI_PLMN = 2
+	SA = auto()
 	NEIGHBOR = auto()
 	LTE_NEIGHBOR = auto()
 	CONFIG_NEIGHBOR = auto()
