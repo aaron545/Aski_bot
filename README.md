@@ -9,6 +9,7 @@ It automatically downloads and installs the specified libraries:
 ## What can you do in this bot
 
 ### **v2.1.0**
+![image](https://github.com/user-attachments/assets/fa07a250-2918-4792-bb4f-9db21fa47523)
 
 add the `ui.py` to control the bot
 
