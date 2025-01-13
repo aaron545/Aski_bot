@@ -203,6 +203,8 @@ def main(args=None):
 		msgLogger("msg_box is visible...")
 
 		page.ele("@class:modal fade show").ele("tag:a@@name:box_ok").click()
+		time.sleep(1)
+		loading(page, "setting change")
 	else:
 		msgLogger("Not need to modify RF Antenna...")
 

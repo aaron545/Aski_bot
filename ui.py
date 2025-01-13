@@ -69,6 +69,7 @@ class UI(ctk.CTk):
 				print(f"Error importing module {module_name}: {e}")
 
 		def button_start_event():
+			self.button_start.configure(state="disabled")
 			button_mode = self.button_mode_var.get()
 			unit_test = self.optionmenu_UT.get()
 			customization = self.optionmenu_custom.get()
@@ -88,8 +89,13 @@ class UI(ctk.CTk):
 			else:
 				args["custom"] = ""
 
+
 			module_name = "web_main" if button_mode == "web" else "amp_main"
-			thread = threading.Thread(target=run_module, args=(module_name, args))
+			
+			def threaded_task():
+				run_module(module_name, args)
+				self.button_start.configure(state="normal")
+			thread = threading.Thread(target=threaded_task)
 			thread.start()
 			
 		class DualOutputRedirector:
