@@ -1,16 +1,7 @@
-from DrissionPage import ChromiumPage, ChromiumOptions
-from enum import Enum, IntEnum, auto
-from datetime import datetime
-
-import pytz
 import os
-import atexit
 import time
-import argparse
-import json
 import re
 import threading
-
 import sys
 import importlib
 import customtkinter as ctk
@@ -47,15 +38,18 @@ class UI(ctk.CTk):
 		def optionmenu_custom_callback(choice):
 			print("customization:", choice)
 
-		def button_event(selected_button):
+		def button_mode_event(selected_button):
 			self.button_mode_var.set(selected_button)
 			print(f"Current selection: {self.button_mode_var.get()}") 
 			if selected_button == "web":
 				self.button_mode1.configure(fg_color="#3B8ED0", text_color="#DCE4EE", hover_color="#36719F")
-				self.button_mode2.configure(fg_color="#DCE4EE", text_color="#3B8ED0", hover_color="#C0C0C3")  
+				self.button_mode2.configure(fg_color="#DCE4EE", text_color="#3B8ED0", hover_color="#C0C0C3")
+				self.optionmenu_custom.configure(state="normal")
 			elif selected_button == "amp":
 				self.button_mode1.configure(fg_color="#DCE4EE", text_color="#3B8ED0", hover_color="#C0C0C3")  
 				self.button_mode2.configure(fg_color="#3B8ED0", text_color="#DCE4EE", hover_color="#36719F")
+				self.optionmenu_custom.configure(state="disabled")
+				self.optionmenu_custom.set("none")
 
 		def run_module(module_name, args):
 			try:
@@ -91,7 +85,7 @@ class UI(ctk.CTk):
 
 
 			module_name = "web_main" if button_mode == "web" else "amp_main"
-			
+
 			def threaded_task():
 				run_module(module_name, args)
 				self.button_start.configure(state="normal")
@@ -137,9 +131,9 @@ class UI(ctk.CTk):
 		self.frame_button = ctk.CTkFrame(self.frame1, fg_color='#DBDBDB')
 		self.frame_button.grid(row=0, column=1, padx=20, pady=(50,30),)
 		self.button_mode_var = ctk.StringVar(value="web")
-		self.button_mode1 = ctk.CTkButton(self.frame_button, text="web", width=btn_width, height=btn_height, command=lambda: button_event("web"))
+		self.button_mode1 = ctk.CTkButton(self.frame_button, text="web", width=btn_width, height=btn_height, command=lambda: button_mode_event("web"))
 		self.button_mode1.grid(row=0, column=0, padx=(0,5), pady=(0,0), sticky="w")
-		self.button_mode2 = ctk.CTkButton(self.frame_button, text="amp", width=btn_width, height=btn_height, command=lambda: button_event("amp"))
+		self.button_mode2 = ctk.CTkButton(self.frame_button, text="amp", width=btn_width, height=btn_height, command=lambda: button_mode_event("amp"))
 		self.button_mode2.grid(row=0, column=1, padx=(5,0), pady=(0,0), sticky="w")
 
 		self.button_mode1.configure(fg_color="#3B8ED0", text_color="#DCE4EE", hover_color="#36719F")

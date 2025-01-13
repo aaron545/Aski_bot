@@ -10,6 +10,9 @@ import time
 import argparse
 import json
 
+textbox_list = ["GNB_ID", "GNB_ID_LENGTH", "CELL_ID", "TAC", "MCC", "MNC", "SST", "SD", "AMF_IP", "PCI", "EPSFB", "POWER"]
+selectmenu_list = ["MODULATION", "LAYER", "DRMS", "NR_BAND", "BANDWIDTH", "TIMESLOT", "TIMING_OFFSET"]
+
 def msgLogger(msg):
     # 取得當前時間並設置時區為台北
     date = datetime.now(pytz.timezone('Asia/Taipei'))
@@ -26,22 +29,18 @@ def close_driver(page):
 def set_SA_value(page, features, li_elements):
 	for key, value in features.items():
 		print(key, ":", value)
-		try:	
-			# for textbox
+
+		if key in textbox_list:
 			element = li_elements[Li_SA[key]].ele('tag:input@@type:text', timeout = 0.1)
 			element.clear(by_js = True)
 			element.input(value)
-		except:
-			# for selectmenu
-			try:
-				li_elements[Li_SA[key]].ele('tag:button', timeout = 0.1).run_js('this.click()', timeout = 0.1)
-				time.sleep(0.2)
-				page.ele('@class:dropdown-menu show').ele(f'tag:a@@text():{value}').click()
-				
-			except:
-				pass
-		finally:
-			time.sleep(0.1)
+		elif key in selectmenu_list:
+			li_elements[Li_SA[key]].ele('tag:button', timeout = 0.1).run_js('this.click()', timeout = 0.1)
+			time.sleep(0.2)
+			page.ele('@class:dropdown-menu show').ele(f'tag:a@@text():{value}').click()
+		else:
+			print(f'{key} is not in any list, skip it...')
+
 	if li_elements[Li_SA.ADMIN_STATE].ele("@@class:text-truncate@@class:badge-pill").text != "Product":
 		li_elements[Li_SA.ADMIN_STATE].ele(".ng-star-inserted").click()
 
@@ -135,9 +134,6 @@ class Config:
 		for key, value in kwargs.items():
 			setattr(self, key, value)
 
-# default_provision = ["BASIC.json", "QAM256_2L.json"]
-# default_radio = "radio.json"
-
 def main(args=None):
 	if args is None:
 		parser = argparse.ArgumentParser(description="Load configuration files")
@@ -158,7 +154,6 @@ def main(args=None):
 
 	radio_list = ['NR_BAND', 'BANDWIDTH', 'TIMESLOT']
 	radio = {key: provision.pop(key) for key in radio_list}
-
 
 	with open("config.json", 'r') as f:
 		data = json.load(f)
