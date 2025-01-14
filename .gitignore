@@ -2,5 +2,6 @@
 __pycache__/
 
 # ignore file
+BASIC.json
 config.json
 test*.py
