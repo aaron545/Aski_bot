@@ -29,7 +29,14 @@ for amp: You can automatically set the provision page of "SA and Deployment"
 
 ## Config
 
-Edit content of `sample_config.json` and rename it as `config.json`.
+Edit content of `sample_config.json sample_BASIC.json` and rename it as `config.json BASIC.json`.
+
+When you want to start or switch to another gNB, please follow the steps below to modify the file.
+
+1. Edit `web_root` in `config.json`
+2. Edit `"GNB_ID", "TAC", "PCI"` in `BASIC.json`
+3. Please replace the `"GNB_N3_IP"` field with your own IP address if you need GNB_N3_IP.
+4. Create a .txt file containing the gNB customization you need and place it in the "**customization**" folder.
 
 ### Config detail
 
