@@ -26,6 +26,84 @@ def loading(page, target):
 		msgLogger(f"{target} is loading......")
 		time.sleep(1)
 
+def set_SNSSAI(page, value):
+	while True:
+		time.sleep(0.5)
+		tbody = page.ele("#modal_edit_plmn_list").eles("tag:tbody")
+		snssai_length = len(tbody)-1
+		print(f'value length = {len(value)}, SNSSAI length = {snssai_length}')
+		if len(value) < snssai_length:
+			tbody[1].ele("#id_Delete").click()
+			page.ele("#cfm_box").ele("tag:a@@name:box_ok").click()
+			time.sleep(0.5)
+		elif len(value) > snssai_length:
+			tbody[-1].ele("#id_Add").click()
+			time.sleep(0.5)
+		else:
+			break
+
+	print("start to set snssai")
+	for i in range(snssai_length):
+		tbody[i].ele("@@id:sst").clear()
+		tbody[i].ele("@@id:sst").input(value[i]["SST"])
+		tbody[i].ele("#edit_sd_disable").click()
+		if value[i]["SD"] == "16777215":
+			page.ele(". css-q5jbor-menu").ele(f"text:Disabled").click()
+		else:
+			page.ele(". css-q5jbor-menu").ele(f"text:Enabled").click()
+			tbody[i].eles("@@id:sd")[1].clear()
+			tbody[i].eles("@@id:sd")[1].input(value[i]["SD"])
+	page.ele("#modal_edit_plmn_list").ele("#id_Save").click()
+
+def set_PLMN(page,value):
+	while True:
+		tbody = page.ele("#modal_edit_plmn_list").eles("tag:tbody")
+		plmn_length = len(tbody)-1
+		print(f'value length = {len(value)}, plmn length = {plmn_length}')
+		if len(value) < plmn_length:
+			tbody[1].ele("#id_Delete").click()
+			page.ele("#cfm_box").ele("tag:a@@name:box_ok").click()
+			time.sleep(0.5)
+		elif len(value) > plmn_length:
+			tbody[-1].ele("#id_Add").click()
+			time.sleep(0.5)
+		else:
+			break
+	print("start to set plmn")
+	for i in range(plmn_length):
+		tbody = page.ele("#modal_edit_plmn_list").eles("tag:tbody")
+		tbody[i].ele("@@id:mcc").clear()
+		tbody[i].ele("@@id:mcc").input(value[i]["MCC"])
+		tbody[i].ele("@@id:mnc").clear()
+		tbody[i].ele("@@id:mnc").input(value[i]["MNC"])
+		tbody[i].ele("#id_SNSSAI").click()
+		set_SNSSAI(page, value[i]["SNSSAI"])
+	page.ele("#modal_edit_plmn_list").ele("#id_Save").click()
+
+def set_AMF_IP(page, value):
+	amf_ip_concat = ", ".join(value)
+	print(amf_ip_concat)
+	if amf_ip_concat != page.ele("#amf_ip").attr("value"):
+		page.ele("#amf_ip").click()
+		while True:
+			tbody = page.ele("#modal_edit_amf_ip").eles("tag:tbody")
+			amf_ip_number = len(tbody)-1
+			print(f'value length = {len(value)}, amf_ip_number length = {amf_ip_number}')
+			if len(value) < amf_ip_number:
+				tbody[1].ele("#id_Delete").click()
+				page.ele("#cfm_box").ele("tag:a@@name:box_ok").click()
+				time.sleep(0.5)
+			elif len(value) > amf_ip_number:
+				tbody[-1].ele("#id_Add").click()
+				time.sleep(0.5)
+			else:
+				break
+		for i in range(amf_ip_number):
+			tbody[i].ele("@@type:text").clear()
+			tbody[i].ele("@@type:text").input(value[i])
+		page.ele("#modal_edit_amf_ip").ele("#id_OK").click()
+		time.sleep(0.5)
+
 class Config:
 	def __init__(self,**kwargs):
 		# 動態設置屬性
@@ -78,10 +156,10 @@ def main(args=None):
 	else:
 		isCustom = False
 
-	CU_list = ["gnb_n2_ip", "gnb_n3_ip", "gnb_id", "gnb_id_length", "cell_id", "tac", "mcc", "mnc", "amf_ip"]
-	DU_list = ["sst", "sd", "nr_band", "physical_cell_id", "modulation", "layer", "drms","bandwidth", "nrarfcn", "timeslot"]
+	CU_list = ["gnb_n2_ip", "gnb_n3_ip", "gnb_id", "gnb_id_length", "cell_id", "tac", "plmn", "amf_ip"]
+	DU_list = ["nr_band", "physical_cell_id", "modulation", "layer", "drms","bandwidth", "nrarfcn", "timeslot"]
 
-	textbox_list = ["gnb_n2_ip", "gnb_n3_ip", "gnb_id", "gnb_id_length", "cell_id", "tac", "mcc", "mnc", "amf_ip", "sst", "physical_cell_id"]
+	textbox_list = ["gnb_n2_ip", "gnb_n3_ip", "gnb_id", "gnb_id_length", "cell_id", "tac", "physical_cell_id"]
 	checkbox_list = ["modulation", "layer", "drms"]
 	selectmenu_list = ["nr_band"]
 	selectmenu_profile_list = ["bandwidth", "nrarfcn", "timeslot"]
@@ -227,7 +305,8 @@ def main(args=None):
 	page.ele(f"tag:label@@for:{Method}").click()
 
 	isIPsec = ''
-	isASK = False if len(page.eles(".SD_select css-b62m3t-container")) == 1 else True
+	# isASK = False if len(page.eles(".SD_select css-b62m3t-container")) == 1 else True
+	isASK = False
 	print("isASK =", isASK)
 	if isASK:
 		# isIPsec = True if page.eles(".SD_select css-b62m3t-container")[0].text == "Enabled" else False
@@ -252,6 +331,14 @@ def main(args=None):
 			page.ele("tag:div@@class:switchBtn").click()
 			isCU = not isCU
 
+		if key == "PLMN":
+			page.ele("#plmn_list").click()
+			set_PLMN(page, value)
+
+		if key == "AMF_IP":
+			page.ele("#amf_ip").click()
+			set_AMF_IP(page, value)
+
 		if key.lower() in textbox_list:
 			print(key.lower(), "=", value)
 			if key == "GNB_N3_IP" and not isN3:
@@ -262,25 +349,6 @@ def main(args=None):
 			textbox = page.ele(f"#{key.lower()}")
 			textbox.clear()
 			textbox.input(value)
-
-		elif key == "SD":
-			if not isASK:
-				page.ele("@@class:SD_select").click()
-			# elif isIPsec:
-			# 	page.eles("@@class:SD_select")[ASK_IPSEC_SD_select.SD].click()
-			# else:
-			# 	page.eles("@@class:SD_select")[ASK_nonIPSEC_SD_select.SD].click()
-			else :
-				page.eles("@@class:SD_select")[ASK_IPSEC_SD_select.SD].click()
-
-			if value != "16777215": 
-				print(key.lower(), "= Enabled,", value)
-				page.ele(". css-4o2p2z-menu").ele("text:Enabled").click()
-				page.ele("#sd").clear()
-				page.ele("#sd").input(value)
-			else: # disable
-				print(key.lower(), "= Disabled")
-				page.ele(". css-4o2p2z-menu").ele("text:Disabled").click()
 
 		elif key == "PCI":
 			print("physical_cell_id =", value)
