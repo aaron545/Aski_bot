@@ -245,6 +245,8 @@ def main(args=None):
 	if "configuration" not in page.url:
 		page.ele("tag:a@@href=/configuration/gNB").click()
 		loading(page, "gNB page")
+		page.ele(".modal fade show").ele("tag:a@@name:box_ok").click()
+		time.sleep(0.5)
 
 	msgLogger("switch to RF Antenna...")
 	page.ele("tag:a@@href=/configuration/rf").click()
@@ -291,6 +293,8 @@ def main(args=None):
 	page.ele("tag:a@@href=/configuration/gNB").click()
 	time.sleep(1)
 	loading(page, "gNB page")
+	page.ele(".modal fade show").ele("tag:a@@name:box_ok").click()
+	time.sleep(0.5)
 
 	# ----------------------Modify parameters----------------------
 	msgLogger("ready to start modifying parameters")
