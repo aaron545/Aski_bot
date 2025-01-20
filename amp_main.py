@@ -10,7 +10,7 @@ import time
 import argparse
 import json
 
-textbox_list = ["GNB_ID", "GNB_ID_LENGTH", "CELL_ID", "TAC", "MCC", "MNC", "SST", "SD", "AMF_IP", "PCI", "EPSFB", "POWER"]
+textbox_list = ["GNB_ID", "GNB_ID_LENGTH", "CELL_ID", "TAC", "AMF_IP", "PCI", "EPSFB", "POWER"]
 selectmenu_list = ["MODULATION", "LAYER", "DRMS", "NR_BAND", "BANDWIDTH", "TIMESLOT", "TIMING_OFFSET"]
 
 def msgLogger(msg):
@@ -29,11 +29,28 @@ def close_driver(page):
 def set_SA_value(page, features, li_elements):
 	for key, value in features.items():
 		print(key, ":", value)
-
 		if key in textbox_list:
 			element = li_elements[Li_SA[key]].ele('tag:input@@type:text', timeout = 0.1)
 			element.clear(by_js = True)
-			element.input(value)
+			if key == "AMF_IP":
+				element.input(value[0])
+			else:
+				element.input(value)
+
+		elif key == "PLMN":
+			MCC = li_elements[Li_SA.MCC].ele('tag:input@@type:text', timeout = 0.1)
+			MCC.clear(by_js = True)
+			MCC.input(value[0]["MCC"])
+			MNC = li_elements[Li_SA.MNC].ele('tag:input@@type:text', timeout = 0.1)
+			MNC.clear(by_js = True)
+			MNC.input(value[0]["MNC"])
+			SST = li_elements[Li_SA.SST].ele('tag:input@@type:text', timeout = 0.1)
+			SST.clear(by_js = True)
+			SST.input(value[0]["SNSSAI"][0]["SST"])
+			SD = li_elements[Li_SA.SD].ele('tag:input@@type:text', timeout = 0.1)
+			SD.clear(by_js = True)
+			SD.input(value[0]["SNSSAI"][0]["SD"])
+
 		elif key in selectmenu_list:
 			li_elements[Li_SA[key]].ele('tag:button', timeout = 0.1).run_js('this.click()', timeout = 0.1)
 			time.sleep(0.2)
@@ -219,6 +236,7 @@ def main(args=None):
 	# link_small_cell = page.ele(loc)
 	link_small_cell = page.ele(f'@@class:text-truncate ng-star-inserted@@text():{serial_number}')
 	link_small_cell.click()
+	time.sleep(1)
 
 	button_menu = page.eles('@@class:btn@@class:btn-primary@@class:ng-star-inserted')
 	button_menu[MENU.PROVISIONING].click()

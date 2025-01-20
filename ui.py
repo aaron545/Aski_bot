@@ -123,8 +123,8 @@ class UI(ctk.CTk):
 
 		self.frame1 = ctk.CTkFrame(master=self)
 		self.frame1.grid(row=0, column=0, padx=(20,10), pady=(10,10), sticky="ewsn")
-		self.frame1.grid_columnconfigure(0, weight=1)  
-		self.frame1.grid_columnconfigure(1, weight=1)  
+		self.frame1.grid_columnconfigure(0, weight=1)
+		self.frame1.grid_columnconfigure(1, weight=1)
 
 		self.label_mode = ctk.CTkLabel(self.frame1, text='web/amp', anchor="center")
 		self.label_mode.grid(row=0, column=0, padx=20, pady=(50,30),)
