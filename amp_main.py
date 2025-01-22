@@ -1,5 +1,5 @@
 from DrissionPage import ChromiumPage, ChromiumOptions
-from DrissionPage.common import By
+from DrissionPage.common import Keys
 from enum import Enum, IntEnum, auto
 from datetime import datetime
 
@@ -81,7 +81,39 @@ def get_SA_value():
 				pass
 		finally:
 			pass
-		
+def checkmultiPLMN(page, PLMN):
+	if len(PLMN) != 1 or len(PLMN[0]["SNSSAI"]) != 1:
+		return True
+	else:
+		return False
+
+def set_MULTI_PLMN_value(page, PLMN):
+	plmn_labels = page.eles("#cuconfig")[1].ele("@@name:indexSwitch").eles("tag:label")
+	for plmnIdx, plmn in enumerate(PLMN):
+		plmn_labels[plmnIdx].click()
+		print(f'{plmnIdx}: plmn')
+		print(f'MCC = {plmn["MCC"]}, MNC = {plmn["MNC"]}')
+
+		MCC = page.eles("#cuconfig")[1].ele("tag:ul").eles("tag:li")[0].ele("tag:input")
+		MCC.clear(by_js = True)
+		MCC.input(plmn["MCC"])
+
+		MNC = page.eles("#cuconfig")[1].ele("tag:ul").eles("tag:li")[1].ele("tag:input")
+		MNC.clear(by_js = True)
+		MNC.input(plmn["MNC"])
+		snssai_labels = page.eles("#cuconfig")[1].ele("@@name:subIndexSwitch").eles("tag:label")
+		for snssaiIdx, snssai in enumerate(plmn["SNSSAI"]):
+			snssai_labels[snssaiIdx].click()
+			print(f'SST = {snssai["SST"]}, SD = {snssai["SD"]}')
+			SST = page.eles("#cuconfig")[1].ele("tag:ul").eles("tag:li")[2].ele("tag:ul").eles("tag:li")[0].ele("tag:input")
+			SST.clear(by_js = True)
+			SST.input(snssai["SST"])
+			SST.input(Keys.ENTER)
+
+			SD = page.eles("#cuconfig")[1].ele("tag:ul").eles("tag:li")[2].ele("tag:ul").eles("tag:li")[1].ele("tag:input")
+			SD.clear(by_js = True)
+			SD.input(snssai["SD"])
+			SD.input(Keys.ENTER)
 
 def set_DEPLOY_value(page, features, li_elements):
 	timingOffset = ["0s", "3ms", "1.94896ms"]
@@ -110,7 +142,7 @@ class MENU(IntEnum):
 
 class TAB(IntEnum):
 	SA = 2
-	MUTI_PLMN = auto()
+	MULTI_PLMN = auto()
 	NEIGHBOR = auto()
 	LTE_NEIGHBOR = auto()
 	CONFIG_NEIGHBOR = auto()
@@ -223,10 +255,8 @@ def main(args=None):
 
 
 	serial_number = config.serial_number
-	try:
-		tb_serial_number = page.ele('tag:datatable-header-cell@style:211.962px').ele('tag:input@type=text')
-	except:
-		tb_serial_number = page.ele('tag:datatable-header-cell@style:204.038px').ele('tag:input@type=text')
+	columnheader = page.eles("@@class:datatable-header-cell resizeable ng-star-inserted")
+	tb_serial_number = columnheader[0].ele('tag:input@type=text')
 
 	msgLogger("searching SN...")
 	tb_serial_number.input(serial_number)
@@ -256,7 +286,18 @@ def main(args=None):
 	li_elements = page.ele('tag:ul@class:list-group').eles('tag:li')
 	set_SA_value(page, provision, li_elements)
 
-	msgLogger("setting the radio config...")
+	msgLogger("setting the multi PLMN configs...")
+	tab = page.eles('@class:nav-item ng-star-inserted')
+	tab[TAB.MULTI_PLMN].click()
+	time.sleep(0.5)
+	ismultiPLMN = checkmultiPLMN(page, provision["PLMN"])
+	status = page.eles("#cuconfig")[0].ele("@@class:text-truncate@@class:badge-pill").text
+	if ismultiPLMN and status == "Product":
+		page.ele("tag:app-default-provisioning").ele(".ng-star-inserted").click()
+	if ismultiPLMN:
+		set_MULTI_PLMN_value(page, provision["PLMN"])
+
+	msgLogger("setting the radio configs...")
 	tab = page.eles('@class:nav-item ng-star-inserted')
 	tab[TAB.DEPLOYMENT].click()
 	time.sleep(0.5)
